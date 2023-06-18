@@ -1,0 +1,70 @@
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    background-color: #f9f9f9;
+    color: white;
+  }
+  
+  .header img {
+    width: 150px;
+    height: auto;
+    margin-right: 10px;
+  }
+  
+  .dropdowns-container {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: 150px;
+    margin-bottom: 40px
+  }
+
+  .logout-button {
+    /* Add your desired styles here */
+    background-color: #f44336;
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+
+
+  .submit-button {
+    /* Add your desired styles here */
+    background-color: #949494;
+    border: 10px;
+    
+    border: none;
+    color: white;
+    padding: 0px 0px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin: 30px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  
+  .form-control {
+    width: 30%;
+    margin-bottom: 20px;
+  }
+  

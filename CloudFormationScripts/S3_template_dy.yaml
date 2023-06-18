@@ -1,0 +1,18 @@
+Resources:
+  DalYearbookBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    Properties:
+      BucketName: dalyearbook-termassignment-csci5409-bucket
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders:
+              - "*"
+            AllowedMethods:
+              - GET
+              - HEAD
+              - PUT
+              - DELETE
+            AllowedOrigins:
+              - "*"
+            ExposedHeaders: []

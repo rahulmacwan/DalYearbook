@@ -1,0 +1,58 @@
+.admin-dashboard {
+  z-index: 1;
+}
+
+.admin-dashboard {
+  margin-top: 60px;
+}
+
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    background-color: #f9f9f9;
+    color: white;
+  }
+  
+  .header img {
+    width: 150px;
+    height: auto;
+    margin-right: 10px;
+  }
+  
+  .dashboard-buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.dashboard-buttons button {
+  background-color: #0074d9;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 0 10px;
+  padding: 10px 20px;
+  transition: background-color 0.3s ease;
+}
+
+.dashboard-buttons button:hover {
+  background-color: #1565c0;
+}
+
+.create-yearbook-button {
+  background-color: #0074d9;
+}
+
+.manage-yearbook-button {
+  background-color: #2ecc71;
+}

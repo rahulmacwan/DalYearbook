@@ -1,0 +1,68 @@
+Resources:
+  VerifyAdminFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        ZipFile: |
+          import json
+          import boto3
+
+          cognito = boto3.client('cognito-idp')
+
+          def lambda_handler(event, context):
+              print(event)
+              
+              body = json.loads(event['body'])
+              email = body['email']
+              password = body['password']
+              
+              try:
+                  response = cognito.initiate_auth(
+                      ClientId='1as3fn60a4puivtdtu5mgapc44',
+                      AuthFlow='USER_PASSWORD_AUTH',
+                      AuthParameters={
+                          'USERNAME': email,
+                          'PASSWORD': password
+                      }
+                  )
+                  
+                  challenge_name = response.get('ChallengeName')
+                  if challenge_name == 'NEW_PASSWORD_REQUIRED':
+                      # Respond to the new password challenge
+                      session = response['Session']
+                      response = cognito.respond_to_auth_challenge(
+                          ClientId='1as3fn60a4puivtdtu5mgapc44',
+                          ChallengeName='NEW_PASSWORD_REQUIRED',
+                          ChallengeResponses={
+                              'USERNAME': email,
+                              'NEW_PASSWORD': password
+                          },
+                          Session=session
+                      )
+                  
+                  print(response)
+                  return {
+                      'statusCode': 200,
+                      'body': json.dumps(response)
+                  }
+              
+              except cognito.exceptions.NotAuthorizedException as e:
+                  print(e)
+                  return {
+                      'statusCode': 401,
+                      'body': json.dumps('Invalid credentials')
+                  }
+              
+              except Exception as e:
+                  print(e)
+                  return {
+                      'statusCode': 500,
+                      'body': json.dumps('Something went wrong')
+                  }
+      Handler: index.lambda_handler
+      Role: >-
+        arn:aws:iam::626653055823:role/service-role/CreatingYearbook-role-lhlnupfw
+      Runtime: python3.9
+      Timeout: 30
+      FunctionName: VerifyAdminDy
+      Description: Lambda function for creating yearbooks in DynamoDB

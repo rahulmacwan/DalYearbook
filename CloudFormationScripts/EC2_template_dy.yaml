@@ -1,0 +1,96 @@
+Resources:
+  DalYearbookInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0103f211a154d64a6
+      InstanceType: t2.micro
+      KeyName: OhioKeyPair
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: 0
+          SubnetId: !ImportValue PublicSubnetId
+          GroupSet:
+            - !Ref DalYearbookSecurityGroup
+      Tags:
+        - Key: Name
+          Value: DalYearbookInstance
+
+  DalYearbookFormInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0103f211a154d64a6
+      InstanceType: t2.micro
+      KeyName: OhioKeyPair
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: 0
+          SubnetId: !ImportValue PublicSubnetId
+          GroupSet:
+            - !Ref DalYearbookSecurityGroup
+      Tags:
+        - Key: Name
+          Value: DalYearbookFormInstance
+
+  DalYearbookAdminInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0103f211a154d64a6
+      InstanceType: t2.micro
+      KeyName: OhioKeyPair
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: 0
+          SubnetId: !ImportValue PublicSubnetId
+          GroupSet:
+            - !Ref DalYearbookSecurityGroup
+      Tags:
+        - Key: Name
+          Value: DalYearbookAdminInstance
+
+  DalYearbookSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for Dal Yearbook instances
+      VpcId: !ImportValue VPCId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 3000
+          ToPort: 3000
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: '-1'
+          FromPort: 0
+          ToPort: 65535
+          CidrIp: 0.0.0.0/0
+  
+Outputs:
+  DalYearbookInstancePublicIp:
+    Description: "Public IP of DalYearbookInstance"
+    Value: !GetAtt DalYearbookInstance.PublicIp
+    Export:
+      Name: DalYearbookInstancePublicIp
+
+  DalYearbookFormInstancePublicIp:
+    Description: "Public IP of DalYearbookFormInstance"
+    Value: !GetAtt DalYearbookFormInstance.PublicIp
+    Export:
+      Name: DalYearbookFormInstancePublicIp
+
+  DalYearbookAdminInstancePublicIp:
+    Description: "Public IP of DalYearbookAdminInstance"
+    Value: !GetAtt DalYearbookAdminInstance.PublicIp
+    Export:
+      Name: DalYearbookAdminInstancePublicIp
+

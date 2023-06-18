@@ -1,0 +1,77 @@
+---
+Resources:
+  YearbookApiGateway:
+    Type: "AWS::ApiGateway::RestApi"
+    Properties:
+      Name: "YearbookApiGateway"
+      Description: "API Gateway for Yearbook App"
+  YearbookFormApiGateway:
+    Type: "AWS::ApiGateway::RestApi"
+    Properties:
+      Name: "YearbookFormApiGateway"
+      Description: "API Gateway for Yearbook Form App"
+  YearbookAdminApiGateway:
+    Type: "AWS::ApiGateway::RestApi"
+    Properties:
+      Name: "YearbookAdminApiGateway"
+      Description: "API Gateway for Yearbook Admin App"
+  YearbookApiGatewayDeployment:
+    Type: "AWS::ApiGateway::Deployment"
+    DependsOn:
+      - YearbookApiGatewayMethod
+    Properties:
+      RestApiId: !Ref YearbookApiGateway
+      StageName: "prod"
+  YearbookFormApiGatewayDeployment:
+    Type: "AWS::ApiGateway::Deployment"
+    DependsOn:
+      - YearbookFormApiGatewayMethod
+    Properties:
+      RestApiId: !Ref YearbookFormApiGateway
+      StageName: "prod"
+  YearbookAdminApiGatewayDeployment:
+    Type: "AWS::ApiGateway::Deployment"
+    DependsOn:
+      - YearbookAdminApiGatewayMethod
+    Properties:
+      RestApiId: !Ref YearbookAdminApiGateway
+      StageName: "prod"
+  YearbookApiGatewayMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      AuthorizationType: "NONE"
+      HttpMethod: "GET"
+      Integration:
+        IntegrationHttpMethod: "GET"
+        Type: "HTTP_PROXY"
+        Uri: !Join ['', ['http://', !ImportValue DalYearbookInstancePublicIp, ':', '3000']]
+      ResourceId: !GetAtt YearbookApiGateway.RootResourceId
+      RestApiId: !Ref YearbookApiGateway
+    DependsOn:
+      - YearbookApiGateway
+  YearbookFormApiGatewayMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      AuthorizationType: "NONE"
+      HttpMethod: "GET"
+      Integration:
+        IntegrationHttpMethod: "GET"
+        Type: "HTTP_PROXY"
+        Uri: !Join ['', ['http://', !ImportValue DalYearbookFormInstancePublicIp, ':', '3000']]
+      ResourceId: !GetAtt YearbookFormApiGateway.RootResourceId
+      RestApiId: !Ref YearbookFormApiGateway
+    DependsOn:
+      - YearbookFormApiGateway
+  YearbookAdminApiGatewayMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      AuthorizationType: "NONE"
+      HttpMethod: "GET"
+      Integration:
+        IntegrationHttpMethod: "GET"
+        Type: "HTTP_PROXY"
+        Uri: !Join ['', ['http://', !ImportValue DalYearbookAdminInstancePublicIp, ':', '3000']]
+      ResourceId: !GetAtt YearbookAdminApiGateway.RootResourceId
+      RestApiId: !Ref YearbookAdminApiGateway
+    DependsOn:
+      - YearbookAdminApiGateway

@@ -1,0 +1,46 @@
+Resources:
+  FetchYearbookFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        ZipFile: |
+          import boto3
+          import json
+
+          dynamodb = boto3.client('dynamodb')
+
+          def lambda_handler(event, context):
+              print("Event:", event)
+              try:
+                  # get program_year_batch from event
+                  program_year_batch = json.loads(event['body'])['program_year_batch']
+                  print("Program Year Batch:", program_year_batch)
+
+                  # scan DynamoDB table to get all items with program_year_batch equal to program_year_batch from event
+                  response = dynamodb.scan(
+                      TableName='YearbookTable',
+                      FilterExpression='program_year_batch = :program_year_batch',
+                      ExpressionAttributeValues={
+                          ':program_year_batch': {'S': program_year_batch}
+                      }
+                  )
+                  print("DynamoDB Scan Response:", response)
+                  return {
+                      'statusCode': 200,
+                      'body': json.dumps(response)
+                  }
+
+              except Exception as e:
+                  print("Error:", e)
+                  return {
+                      'statusCode': 500,
+                      'body': json.dumps({'error': str(e)})
+                  }
+
+      Handler: index.lambda_handler
+      Role: >-
+        arn:aws:iam::626653055823:role/service-role/CreatingYearbook-role-lhlnupfw
+      Runtime: python3.9
+      Timeout: 30
+      FunctionName: FetchYearbookDy
+      Description: Lambda function for creating yearbooks in DynamoDB

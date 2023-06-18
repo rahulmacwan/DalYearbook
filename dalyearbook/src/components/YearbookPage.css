@@ -1,0 +1,91 @@
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  background-color: #f9f9f9;
+  color: white;
+}
+
+.header img {
+  width: 150px;
+  height: auto;
+  margin-right: 1250px;
+}
+
+.dropdowns-container {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  margin-bottom: 10px
+}
+
+.form-control {
+  width: 30%;
+  margin-bottom: 20px;
+}
+
+
+.yearbook-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.form-container {
+  display: flex;
+  align-items: center;
+}
+
+
+.submit-button {
+  margin-top: 20px;
+}
+
+.yearbook-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.yearbook-card {
+  width: 300px;
+  margin: 10px;
+  border: 1px solid #ccc;
+  box-shadow: 2px 2px 5px #ccc;
+}
+
+.yearbook-photo {
+  height: 200px;
+  object-fit: cover;
+  margin: 10px;
+}
+
+.yearbook-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 10px;
+}
+
+
+.yearbook-details h3 {
+  margin: 10px 0;
+}
+
+.yearbook-details p {
+  margin: 5px 0;
+}
+.yearbook-quote, .advice {
+  font-family: 'Cedarville Cursive', cursive;
+}

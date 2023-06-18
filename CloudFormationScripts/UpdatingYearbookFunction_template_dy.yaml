@@ -1,0 +1,103 @@
+Resources:
+  UpdatingYearbookFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        ZipFile: |
+          import json
+          import boto3
+          import base64
+
+          s3 = boto3.resource('s3')
+          dynamodb = boto3.resource('dynamodb')
+          table = dynamodb.Table('dalyearbook-termassignment-dynamodb-table')
+
+          def lambda_handler(event, context):
+              body = json.loads(event['body'])
+
+              student_email = body['student_email']
+              program_year_batch = body['programYearBatch']
+              firstName = body['firstName']
+              lastName = body['lastName']
+              yearbookQuote = body['yearbookQuote']
+              advice = body['advice']
+
+              # check if the email exists in the table
+              response = table.get_item(
+                  Key={
+                      'student_email': student_email,
+                      'program_year_batch': program_year_batch
+                  }   
+              )
+              if 'Item' in response:
+                  # email exists, check if program_year_batch matches
+                  item = response['Item']
+                  if item['program_year_batch'] == program_year_batch:
+                      # program_year_batch matches, update the item
+                      table.update_item(
+                          Key={
+                              'student_email': student_email,
+                              'program_year_batch': program_year_batch
+                          },   
+                          UpdateExpression='set first_name = :fn, last_name = :ln, yearbook_quote = :yq, advice = :ad',
+                          ExpressionAttributeValues={
+                              ':fn': firstName,
+                              ':ln': lastName,
+                              ':yq': yearbookQuote,
+                              ':ad': advice
+                          }
+                      )
+
+                      # Upload photo to S3 if it exists and item is updated successfully
+                      if body['photo']:
+                          try:
+                              # Decode the base64-encoded image data
+                              photo_data = base64.b64decode(body['photo']['data'])
+
+                              # Upload the photo to S3
+                              bucket = 'dalyearbook-termassignment-bucket-csci5409bs'
+                              key = f"{student_email}_{program_year_batch.replace(' ', '_')}.jpg"
+                              s3.Bucket(bucket).put_object(Key=key, Body=photo_data, ContentType=body['photo']['contentType'])
+
+                              # Get the object URL and update the photo_url attribute in DynamoDB
+                              object_url = f"https://{bucket}.s3.amazonaws.com/{key}"
+                              table.update_item(
+                                  Key={
+                                      'student_email': student_email,
+                                      'program_year_batch': program_year_batch
+                                  },
+                                  UpdateExpression='set photo_url = :pu',
+                                  ExpressionAttributeValues={
+                                      ':pu': object_url
+                                  }
+                              )
+                          except Exception as e:
+                              print(f"Error uploading photo to S3: {e}")
+                              return {
+                                  'statusCode': 500,
+                                  'body': json.dumps({'message': 'Error uploading photo to S3.'})
+                              }
+
+                      return {
+                          'statusCode': 200,
+                          'body': json.dumps({'message': 'Item updated successfully.'})
+                      }
+                  else:
+                      # program_year_batch does not match
+                      return {
+                          'statusCode': 400,
+                          'body': json.dumps({'message': 'Program, year, or batch does not match.'})
+                      }
+              else:
+                  # email does not exist in the table
+                  return {
+                      'statusCode': 404,
+                      'body': json.dumps({'message': 'Email not found in the table.'})
+                  }
+      Handler: index.lambda_handler
+      Role: >-
+        arn:aws:iam::626653055823:role/service-role/CreatingYearbook-role-lhlnupfw
+      Runtime: python3.9
+      Timeout: 30
+      FunctionName: UpdatingYearbookDy
+      Description: Lambda function for creating yearbooks in DynamoDB
